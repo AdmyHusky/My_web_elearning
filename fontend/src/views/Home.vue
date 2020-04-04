@@ -1,19 +1,12 @@
 <template>
-
   <v-app id="inspire">
-    <!-- Top  -->
+    <!-- Menu Bar  -->
     <BarLogin />
-    <!--Center -->
-    <div class="fill-height" fluid>
-      <div class="row">
-        <v-img
-          alt="Wallpaper"
-          contain
-          :src="require('../assets/e-learning.jpg')"
-          transition="scale-transition"
-        />
-      </div>
+    <!--image background -->
+    <div class="row">
+      <v-img id="image" alt="Wallpaper" :src="require('../assets/e-learning.jpg')" />
     </div>
+    <div class="fill-height" fluid></div>
   </v-app>
 </template>
 
@@ -38,3 +31,12 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+#image {
+  height: 510px;
+  width: 2000px;
+  filter: blur(1px);
+  filter: brightness(75%);
+}
+</style>
