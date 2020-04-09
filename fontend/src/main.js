@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
-import VueMouseFollower from 'vue-mousefollower'
+import VueKinesis from 'vue-kinesis'
 
 Vue.config.productionTip = false
 
@@ -11,6 +11,6 @@ new Vue({
   router,
   store,
   vuetify,
-  VueMouseFollower,
+  VueKinesis,
   render: h => h(App)
 }).$mount('#app')
