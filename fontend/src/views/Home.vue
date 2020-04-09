@@ -21,10 +21,18 @@
       </v-btn>
     </v-app-bar>
     <v-sheet id="scrolling-techniques-4" class="overflow-y-auto" max-height="600">
-      <v-span style="height: 1000px;">
-        <!-- wallpaper -->
-        <div id="bg" v-mousefollower></div>
-      </v-span>
+      <v-content>
+        <v-container style="height: 750px;" fluid>
+          <v-row align="center" justify="center">
+            <v-col class="text-center">
+              <!-- wallpaper -->
+              <template>
+                <v-img id="image" alt="Wallpaper" :src="require('../assets/wallpaper.jpg')" />
+              </template>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-content>
     </v-sheet>
   </v-card>
 </template>
@@ -46,9 +54,4 @@ export default {
 </script>
 
 <style scoped>
-#bg{
-  max-width: 100%;
-  height: 1000px;
-  background: url(https://cdn.vuetifyjs.com/images/cards/desert.jpg);
-}
 </style>
