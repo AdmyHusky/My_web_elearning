@@ -21,14 +21,24 @@
       </v-btn>
     </v-app-bar>
     <v-sheet id="scrolling-techniques-4" class="overflow-y-auto" max-height="600">
-      <v-content>
-        <v-container style="height: 750px;" fluid>
+      <v-content id="wallpaper">
+        <v-container fluid>
           <v-row align="center" justify="center">
             <v-col class="text-center">
               <!-- wallpaper -->
               <template>
                 <v-img id="image" alt="Wallpaper" :src="require('../assets/wallpaper.jpg')" />
               </template>
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-container>
+          <!-- button -->
+          <v-row align="center">
+            <v-col class="text-center">
+              <div class="my-2">
+                <v-btn rounded color="#FFB300" dark x-large>เข้าสู่ระบบ</v-btn>
+              </div>
             </v-col>
           </v-row>
         </v-container>
@@ -54,4 +64,5 @@ export default {
 </script>
 
 <style scoped>
+
 </style>
