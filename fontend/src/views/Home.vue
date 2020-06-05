@@ -61,16 +61,21 @@
                         <v-container>
                           <v-row>
                             <v-col cols="12" sm="6">
-                              <v-text-field label="First name*" required></v-text-field>
+                              <v-text-field v-model="fname" label="First name*" required></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6">
-                              <v-text-field label="Last name*" required></v-text-field>
+                              <v-text-field v-model="lname" label="Last name*" required></v-text-field>
                             </v-col>
                             <v-col cols="12">
-                              <v-text-field label="Email*" required></v-text-field>
+                              <v-text-field v-model="emailuser" label="Email*" required></v-text-field>
                             </v-col>
                             <v-col cols="12">
-                              <v-text-field label="Password*" type="password" required></v-text-field>
+                              <v-text-field
+                                v-model="password"
+                                label="Password*"
+                                type="password"
+                                required
+                              ></v-text-field>
                             </v-col>
                             <v-col cols="12">
                               <v-text-field
@@ -105,6 +110,7 @@
                             </v-col>
                             <v-col cols="12" sm="6">
                               <v-autocomplete
+                                v-model="sex"
                                 :items="['Male', 'Female','Other']"
                                 label="Sex"
                                 prepend-icon="mdi-gender-transgender"
@@ -117,7 +123,7 @@
                       <v-card-actions>
                         <v-spacer></v-spacer>
                         <v-btn color="blue darken-1" text @click="dialog = false">Close</v-btn>
-                        <v-btn color="blue darken-1" text @click="dialog = false">Save</v-btn>
+                        <v-btn color="blue darken-1" text @click="addUser" type="is-success">Add</v-btn>
                       </v-card-actions>
                     </v-card>
                   </v-dialog>
@@ -132,6 +138,9 @@
 </template>
 
 <script>
+// @ is an alias to /src
+import { HTTP } from "@/axios.js";
+
 export default {
   props: {
     source: String
@@ -141,7 +150,12 @@ export default {
     dialog: false,
     date: new Date().toISOString().substr(0, 10),
     dateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
-    menu1: false
+    menu1: false,
+    fname: '',
+    lname: '',
+    emailuser: '',
+    password: '',
+    sex: ''
   }),
   computed: {
     computedDateFormatted() {
@@ -164,6 +178,24 @@ export default {
       if (!date) return null;
       const [year, month, day] = date.split("-");
       return `${month}/${day}/${year}`;
+    },
+    async addUser() {
+      let obj = {
+        fname: this.fname,
+        lname: this.lname,
+        emailuser: this.emailuser,
+        password: this.password,
+        birthday: this.date,
+        sex: this.sex
+      };
+
+      await HTTP.post(`/users`, obj)
+        .then(res => {
+          console.log(res);
+        })
+        .catch(e => {
+          console.log(e);
+        });
     }
   }
 };
