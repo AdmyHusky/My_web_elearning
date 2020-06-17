@@ -24,39 +24,59 @@
           <v-dialog v-model="showLogin" persistent max-width="600px" ref="form">
             <template v-slot:activator="{ on }">
               <v-btn v-on="on" text>
-              <v-icon>mdi-login</v-icon>
-              <span class="mr-2" style="margin-left: 5px;">Login</span>
+                <v-icon>mdi-login</v-icon>
+                <span class="mr-2" style="margin-left: 5px;">Login</span>
               </v-btn>
-              </template>
-               <v-card>
-                      <v-card-title>
-                        <span class="headline">Login</span>
-                      </v-card-title>
-                      <v-form ref="form" v-model="valid" :lazy-validation="lazy">
-                        <v-card-text>
-                          <v-container>
-                           <!-- Login form -->
-                          </v-container>
-                        </v-card-text>
-                      </v-form>
-                      <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn color="blue darken-1" text @click="closeRegister">Close</v-btn>
-                        <v-btn
-                          color="blue darken-1"
-                          :disabled="!valid"
-                          text
-                          @click="addUser"
-                          type="is-success"
-                        >Save</v-btn>
-                      </v-card-actions>
-                    </v-card>
-                  </v-dialog>
-              </v-app-bar>
-              <v-sheet id="scrolling-techniques-4" class="overflow-y-auto" max-height="700">
-                <v-content>
-                  <v-container fluid>
-                    <v-row align="center" justify="center">
+            </template>
+            <v-card>
+              <v-card-title>
+                <span class="headline">Login</span>
+              </v-card-title>
+              <v-form ref="form" v-model="valid" :lazy-validation="lazy">
+                <v-card-text>
+                  <v-container>
+                    <v-row>
+                      <v-col cols="12">
+                        <v-text-field
+                          prepend-icon="mdi-email"
+                          :rules="emailRules"
+                          v-model="emailuser"
+                          label="Email*"
+                          required
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12">
+                        <v-text-field
+                          prepend-icon="mdi-key"
+                          label="Password*"
+                          v-model="password"
+                          :rules="passwordRules"
+                          type="password"
+                          required
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card-text>
+              </v-form>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="closeLogin">Close</v-btn>
+                <v-btn
+                  color="blue darken-1"
+                  :disabled="!valid"
+                  text
+                  @click="addUser"
+                  type="is-success"
+                >Save</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-app-bar>
+        <v-sheet id="scrolling-techniques-4" class="overflow-y-auto" max-height="700">
+          <v-content>
+            <v-container fluid>
+              <v-row align="center" justify="center">
                 <v-col class="text-center">
                   <!-- wallpaper -->
                   <div>
@@ -116,7 +136,7 @@
                               </v-col>
                               <v-col cols="12">
                                 <v-text-field
-                                  label="Password"
+                                  label="Password*"
                                   v-model="password"
                                   :rules="passwordRules"
                                   type="password"
@@ -125,7 +145,7 @@
                               </v-col>
                               <v-col cols="12">
                                 <v-text-field
-                                  label="Confirm Password"
+                                  label="Confirm Password*"
                                   v-model="confirmPassword"
                                   :rules="[confirmPasswordRules,passwordConfirmationRule]"
                                   type="password"
@@ -211,7 +231,11 @@ export default {
     emailuser: "",
     password: "",
     confirmPassword: "",
-    passwordRules: [v => !!v || "Password is required"],
+    passwordRules: [
+      v => !!v || "Password is required",
+      v => /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/.test(v) || "Password is required (a-z),(A-Z)",
+      v => v.length > 7 || "Password must be more than 7 characters"
+      ],
     confirmPasswordRules: [v => !!v || "Password is required"],
     sex: "",
     emailRules: [
@@ -268,7 +292,11 @@ export default {
     closeRegister() {
       this.showRegister = false;
       this.$refs.form.reset();
-    }
+    },
+    closeLogin() {
+      this.showLogin = false;
+      this.$refs.form.reset();
+    },
   }
 };
 </script>
