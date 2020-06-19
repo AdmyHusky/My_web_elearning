@@ -32,7 +32,7 @@
               <v-card-title>
                 <span class="headline">Login</span>
               </v-card-title>
-              <v-form ref="form" v-model="valid" :lazy-validation="lazy">
+              <v-form ref="form" v-model="validlogin" :lazy-validation="lazy">
                 <v-card-text>
                   <v-container>
                     <v-row>
@@ -64,11 +64,10 @@
                 <v-btn color="blue darken-1" text @click="closeLogin">Close</v-btn>
                 <v-btn
                   color="blue darken-1"
-                  :disabled="!valid"
                   text
-                  @click="addUser"
+                  @click="checkUser"
                   type="is-success"
-                >Save</v-btn>
+                >Enter</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -233,9 +232,12 @@ export default {
     confirmPassword: "",
     passwordRules: [
       v => !!v || "Password is required",
-      v => /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/.test(v) || "Password is required (a-z),(A-Z)",
-      v => v.length > 7 || "Password must be more than 7 characters"
-      ],
+      v =>
+        /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/.test(v) ||
+        "Password must be more than 7 and  required (a-z),(A-Z)",
+      v =>
+        v.length > 7 || "Password must be more than 7 and  required (a-z),(A-Z)"
+    ],
     confirmPasswordRules: [v => !!v || "Password is required"],
     sex: "",
     emailRules: [
@@ -277,7 +279,6 @@ export default {
           birthday: this.date,
           sex: this.sex
         };
-
         await HTTP.post(`/users`, obj)
           .then(res => {
             console.log(res);
@@ -297,6 +298,23 @@ export default {
       this.showLogin = false;
       this.$refs.form.reset();
     },
+    async checkUser() {
+      if (this.$refs.form.validate()) {
+        let obj = {
+          emailuser: this.emailuser,
+          password: this.password
+        };
+        await HTTP.post(`/auth`, obj)
+          .then(res => {
+            console.log(res);
+            this.showLogin = false;
+          })
+          .catch(error => {
+            this.message = error;
+            console.log(error);
+          });
+      }
+    }
   }
 };
 </script>
