@@ -39,7 +39,6 @@
                       <v-col cols="12">
                         <v-text-field
                           prepend-icon="mdi-email"
-                          :rules="emailRules"
                           v-model="emailuser"
                           label="Email*"
                           required
@@ -50,7 +49,6 @@
                           prepend-icon="mdi-key"
                           label="Password*"
                           v-model="password"
-                          :rules="passwordRules"
                           type="password"
                           required
                         ></v-text-field>
