@@ -60,14 +60,23 @@
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="closeLogin">Close</v-btn>
-                <v-btn
-                  color="blue darken-1"
-                  text
-                  @click="checkUser"
-                  type="is-success"
-                >Enter</v-btn>
+                <v-btn color="blue darken-1" text @click="login" type="is-success">Enter</v-btn>
               </v-card-actions>
             </v-card>
+            <!--<v-snackbar
+              v-model="snackbar"
+              :timeout="timeout"
+              :bottom="y === 'bottom'"
+              color= #FFFFFF
+              :left="x === 'left'"
+              :multi-line="mode === 'multi-line'"
+              :right="x === 'right'"
+              :top="y === 'top'"
+              :vertical="mode === 'vertical'"
+            >
+              {{ msg }}
+              <v-btn color="pink" text @click="snackbar = false">Close</v-btn>
+            </v-snackbar> -->
           </v-dialog>
         </v-app-bar>
         <v-sheet id="scrolling-techniques-4" class="overflow-y-auto" max-height="700">
@@ -192,7 +201,7 @@
                           color="blue darken-1"
                           :disabled="!valid"
                           text
-                          @click="addUser"
+                          @click="signUp"
                           type="is-success"
                         >Save</v-btn>
                       </v-card-actions>
@@ -210,19 +219,24 @@
 
 <script>
 // @ is an alias to /src
-import { HTTP } from "@/axios.js";
+import AuthService from "@/services/AuthService.js";
 
 export default {
   props: {
     source: String
   },
   data: vm => ({
-    drawer: null,
     showLogin: false,
     showRegister: false,
     date: new Date().toISOString().substr(0, 10),
     dateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
     menu1: false,
+    //mode: "",
+    //snackbar: false,
+    //timeout: 6000,
+    //x: null,
+    //y: "top",
+    msg: "",
     fname: "",
     lname: "",
     emailuser: "",
@@ -267,9 +281,10 @@ export default {
       const [year, month, day] = date.split("-");
       return `${month}/${day}/${year}`;
     },
-    async addUser() {
+    async signUp() {
       if (this.$refs.form.validate()) {
-        let obj = {
+        try {
+        const credentials = {
           fname: this.fname,
           lname: this.lname,
           emailuser: this.emailuser,
@@ -277,15 +292,13 @@ export default {
           birthday: this.date,
           sex: this.sex
         };
-        await HTTP.post(`/users`, obj)
-          .then(res => {
-            console.log(res);
-            this.showRegister = false;
-          })
-          .catch(error => {
-            this.message = error;
-            console.log(error);
-          });
+        const response = await AuthService.signUp(credentials)
+        this.msg = response.msg;
+        this.showRegister = false;
+        this.$refs.form.reset();
+        }catch (error) {
+        alert(this.msg = error.response.data.msg)
+      }
       }
     },
     closeRegister() {
@@ -296,21 +309,28 @@ export default {
       this.showLogin = false;
       this.$refs.form.reset();
     },
-    async checkUser() {
+    async login() {
       if (this.$refs.form.validate()) {
-        let obj = {
-          emailuser: this.emailuser,
-          password: this.password
-        };
-        await HTTP.post(`/auth`, obj)
-          .then(res => {
-            console.log(res);
-            this.showLogin = false;
-          })
-          .catch(error => {
-            this.message = error;
-            console.log(error);
-          });
+        try {
+          const credentials = {
+            emailuser: this.emailuser,
+            password: this.password
+          };
+          const response = await AuthService.login(credentials);
+          this.msg = response.msg;
+          const token = response.token;
+          const user = response.user;
+          this.$store.dispatch("login", { token, user });
+           if (user.role === "teacher") {
+             this.$router.push("/HomepageTeacher");
+           }else{
+             this.$router.push("/HomeStudent");
+           }
+        } catch (error) {
+          alert(this.msg = error.response.data.msg)
+          //this.snackbar = true
+          //this.msg = error.response.data.msg;
+        }
       }
     }
   }

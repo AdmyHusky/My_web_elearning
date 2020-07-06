@@ -20,7 +20,8 @@ router.post('/sign-up', userMiddleware.validateRegister, (req, res, next) => {
         } else {
             // username is available
             const tohash = sha1(salt + password)
-            pool.query(`INSERT INTO users (id,fname, lname, email, password, birthday, sex) VALUES ($1, $2, $3, $4, $5, $6, $7)`, [uuid.v4(), fname, lname, emailuser, tohash, birthday, sex], (error, result) => {
+            const role = 'student'
+            pool.query(`INSERT INTO users (id,fname, lname, email, password, birthday, sex, role) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`, [uuid.v4(), fname, lname, emailuser, tohash, birthday, sex, role], (error, result) => {
                 if (error) {
                     console.log(error)
                     return res.status(400).send({
@@ -36,13 +37,13 @@ router.post('/sign-up', userMiddleware.validateRegister, (req, res, next) => {
 });
 router.post('/login', (req, res, next) => {
     const { emailuser, password } = req.body
-    console.log(emailuser)
-    console.log(password)
+    //console.log(emailuser)
+    //console.log(password)
     pool.query(`SELECT * FROM users WHERE email =  $1`, [emailuser], (err, result) => {
-        console.log(result.rows.length)
-        console.log(!result.rows.length)
-        console.log(result.length)
-        console.log(!result.length)
+        //console.log(result.rows.length)
+        //console.log(!result.rows.length)
+        //console.log(result.length)
+        //console.log(!result.length)
         // user does not exists
         if (err) {
             return res.status(400).send({
@@ -61,10 +62,11 @@ router.post('/login', (req, res, next) => {
                 if (resultsb.rows.length > 0) {
                     const token = jwt.sign({
                         userfname: result.rows[0].fname,
-                        userId: result.rows[0].id
+                        userId: result.rows[0].id,
+                        userrole: result.rows[0].role
                     },
                         'webelearning', {
-                        expiresIn: '7d'
+                        expiresIn: '2h'
                     }
                     )
                     return res.status(200).send({
@@ -86,7 +88,8 @@ router.post('/login', (req, res, next) => {
         }
     });
 });
-router.get('/secret-route', (req, res, next) => {
+router.get('/secret-route', userMiddleware.isLoggedIn, (req, res, next) => {
+    console.log(req.userData);
     res.send('This is the secret content. Only logged in users can see that!');
 });
 module.exports = router;
