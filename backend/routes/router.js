@@ -58,7 +58,7 @@ router.post('/login', (req, res, next) => {
         // check password
         const tohash = sha1(salt + password)
         if (tohash == result.rows[0].password) {
-            pool.query('SELECT * FROM users WHERE email = $1 AND password = $2', [emailuser, tohash], function (errorb, resultsb) {
+            pool.query(`SELECT * FROM users WHERE email = $1 AND password = $2`, [emailuser, tohash], function (errorb, resultsb) {
                 if (resultsb.rows.length > 0) {
                     const token = jwt.sign({
                         userfname: result.rows[0].fname,
@@ -91,5 +91,21 @@ router.post('/login', (req, res, next) => {
 router.get('/secret-route', userMiddleware.isLoggedIn, (req, res, next) => {
     console.log(req.userData);
     res.send('This is the secret content. Only logged in users can see that!');
+});
+//HomeTeacher
+router.get('/course', userMiddleware.isLoggedIn, (req, res, next) => {
+    pool.query(`SELECT * FROM course `, (err, result) => {
+        //console.log(result)
+        //console.log(result.rows)
+        //console.log(result.rows[3])
+        //console.log(result.rows[3].course_name)
+        if (result.rows.length > 0) {
+            res.status(200).json(result.rows)
+        } else {
+            return res.status(401).send({
+                msg: 'Your session is not valid!'
+            });
+        }
+    });
 });
 module.exports = router;

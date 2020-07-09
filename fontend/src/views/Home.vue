@@ -1,345 +1,81 @@
-<template >
-  <div class="bg">
-    <v-container
-      max-height="600"
-      style="position: relative;
-      top: 50%;
-      -webkit-transform: translateY(-50%);
-      -ms-transform: translateY(-50%);
-      transform: translateY(-50%);"
-    >
-      <v-card class="overflow-hidden d-flex justify-center align-center">
-        <!-- bar -->
-        <v-app-bar
-          absolute
-          color="teal lighten-3"
-          dark
-          hide-on-scroll
-          scroll-target="#scrolling-techniques-4"
-        >
-          <v-toolbar-title>English_Evening</v-toolbar-title>
-
-          <v-spacer></v-spacer>
-          <!-- Login Button -->
-          <v-dialog v-model="showLogin" persistent max-width="600px" ref="form">
-            <template v-slot:activator="{ on }">
-              <v-btn v-on="on" text>
-                <v-icon>mdi-login</v-icon>
-                <span class="mr-2" style="margin-left: 5px;">Login</span>
-              </v-btn>
-            </template>
-            <v-card>
-              <v-card-title>
-                <span class="headline">Login</span>
-              </v-card-title>
-              <v-form ref="form" v-model="validlogin" :lazy-validation="lazy">
-                <v-card-text>
-                  <v-container>
-                    <v-row>
-                      <v-col cols="12">
-                        <v-text-field
-                          prepend-icon="mdi-email"
-                          v-model="emailuser"
-                          label="Email*"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12">
-                        <v-text-field
-                          prepend-icon="mdi-key"
-                          label="Password*"
-                          v-model="password"
-                          type="password"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card-text>
-              </v-form>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="closeLogin">Close</v-btn>
-                <v-btn color="blue darken-1" text @click="login" type="is-success">Enter</v-btn>
-              </v-card-actions>
-            </v-card>
-            <!--<v-snackbar
-              v-model="snackbar"
-              :timeout="timeout"
-              :bottom="y === 'bottom'"
-              color= #FFFFFF
-              :left="x === 'left'"
-              :multi-line="mode === 'multi-line'"
-              :right="x === 'right'"
-              :top="y === 'top'"
-              :vertical="mode === 'vertical'"
+ <template>
+  <div>
+    <v-container class="my-5">
+      <h1>Course</h1>
+      <v-layout row wrap class="my-3">
+        <v-flex xs12 sm6 md4 lg3 v-for="subject in courses" :key="subject.course_name">
+          <v-card class="ma-2" max-width="400">
+            <v-img
+              class="white--text align-end"
+              height="200px"
+              src="https://picsum.photos/id/1/200/300"
             >
-              {{ msg }}
-              <v-btn color="pink" text @click="snackbar = false">Close</v-btn>
-            </v-snackbar> -->
-          </v-dialog>
-        </v-app-bar>
-        <v-sheet id="scrolling-techniques-4" class="overflow-y-auto" max-height="700">
-          <v-content>
-            <v-container fluid>
-              <v-row align="center" justify="center">
-                <v-col class="text-center">
-                  <!-- wallpaper -->
-                  <div>
-                    <v-img
-                      class="mt-6"
-                      id="image"
-                      alt="Wallpaper"
-                      :src="require('../assets/wallpaper.jpg')"
-                    />
-                  </div>
-                </v-col>
-              </v-row>
-            </v-container>
-            <v-container>
-              <!-- button -->
-              <v-row align="center">
-                <v-col class="text-center">
-                  <v-dialog v-model="showRegister" persistent max-width="600px" ref="form">
-                    <template v-slot:activator="{ on }">
-                      <div class="my-2">
-                        <v-btn v-on="on" rounded color="#FFB300" dark x-large>Register</v-btn>
-                      </div>
-                    </template>
-                    <v-card>
-                      <v-card-title>
-                        <span class="headline">Register</span>
-                      </v-card-title>
-                      <v-form ref="form" v-model="valid" :lazy-validation="lazy">
-                        <v-card-text>
-                          <v-container>
-                            <v-row>
-                              <v-col cols="12" sm="6">
-                                <v-text-field
-                                  v-model="fname"
-                                  :rules="nameRules"
-                                  label="First name*"
-                                  :counter="32"
-                                  required
-                                ></v-text-field>
-                              </v-col>
-                              <v-col cols="12" sm="6">
-                                <v-text-field
-                                  v-model="lname"
-                                  :rules="nameRules"
-                                  label="Last name*"
-                                  :counter="32"
-                                  required
-                                ></v-text-field>
-                              </v-col>
-                              <v-col cols="12">
-                                <v-text-field
-                                  :rules="emailRules"
-                                  v-model="emailuser"
-                                  label="Email*"
-                                  required
-                                ></v-text-field>
-                              </v-col>
-                              <v-col cols="12">
-                                <v-text-field
-                                  label="Password*"
-                                  v-model="password"
-                                  :rules="passwordRules"
-                                  type="password"
-                                  required
-                                ></v-text-field>
-                              </v-col>
-                              <v-col cols="12">
-                                <v-text-field
-                                  label="Confirm Password*"
-                                  v-model="confirmPassword"
-                                  :rules="[confirmPasswordRules,passwordConfirmationRule]"
-                                  type="password"
-                                  required
-                                ></v-text-field>
-                              </v-col>
-                              <v-col cols="12" sm="6">
-                                <v-menu
-                                  ref="menu1"
-                                  v-model="menu1"
-                                  :close-on-content-click="false"
-                                  transition="scale-transition"
-                                  offset-y
-                                  max-width="290px"
-                                  min-width="290px"
-                                >
-                                  <template v-slot:activator="{ on }">
-                                    <v-text-field
-                                      v-model="dateFormatted"
-                                      label="Date"
-                                      hint="MM/DD/YYYY format"
-                                      persistent-hint
-                                      prepend-icon="mdi-calendar"
-                                      @blur="date = parseDate(dateFormatted)"
-                                      v-on="on"
-                                    ></v-text-field>
-                                  </template>
-                                  <v-date-picker v-model="date" no-title @input="menu1 = false"></v-date-picker>
-                                </v-menu>
-                              </v-col>
-                              <v-col cols="12" sm="6">
-                                <v-autocomplete
-                                  v-model="sex"
-                                  :items="['Male', 'Female','Other']"
-                                  label="Sex"
-                                  prepend-icon="mdi-gender-transgender"
-                                ></v-autocomplete>
-                              </v-col>
-                            </v-row>
-                          </v-container>
-                        </v-card-text>
-                      </v-form>
-                      <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn color="blue darken-1" text @click="closeRegister">Close</v-btn>
-                        <v-btn
-                          color="blue darken-1"
-                          :disabled="!valid"
-                          text
-                          @click="signUp"
-                          type="is-success"
-                        >Save</v-btn>
-                      </v-card-actions>
-                    </v-card>
-                  </v-dialog>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-content>
-        </v-sheet>
-      </v-card>
+              <v-card-title>{{subject.course_name}}</v-card-title>
+            </v-img>
+            <v-card-subtitle class="pb-0">{{subject.course_id}}</v-card-subtitle>
+            <v-card-actions>
+              <v-btn color="orange" text>Share</v-btn>
+
+              <v-btn color="orange" text>Explore</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-flex>
+      </v-layout>
     </v-container>
+    <v-btn bottom color="orange" dark fab fixed right @click="dialog = !dialog">
+      <v-icon>mdi-plus</v-icon>
+    </v-btn>
+    <v-dialog v-model="dialog" width="800px">
+      <v-card>
+        <v-card-title class="teal lighten-3">Create course</v-card-title>
+        <v-container>
+          <v-row class="mx-2">
+            <v-col cols="12">
+              <v-text-field placeholder="Course name"></v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-text-field type="tel" placeholder="Course description"></v-text-field>
+            </v-col>
+            <v-col cols="12">
+              <v-autocomplete
+                v-model="Level"
+                :items="['1', '2','3','4','5','6','7','8','9','10']"
+                label="Level"
+              ></v-autocomplete>
+            </v-col>
+          </v-row>
+        </v-container>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn text color="primary" @click="dialog = false">Cancel</v-btn>
+          <v-btn text @click="dialog = false">Save</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import AuthService from "@/services/AuthService.js";
+import AuthService from "@/services/TeacherService.js";
 
 export default {
-  props: {
-    source: String
+  data() {
+    return {
+      courses: [],
+      dialog: false
+    };
   },
-  data: vm => ({
-    showLogin: false,
-    showRegister: false,
-    date: new Date().toISOString().substr(0, 10),
-    dateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
-    menu1: false,
-    //mode: "",
-    //snackbar: false,
-    //timeout: 6000,
-    //x: null,
-    //y: "top",
-    msg: "",
-    fname: "",
-    lname: "",
-    emailuser: "",
-    password: "",
-    confirmPassword: "",
-    passwordRules: [
-      v => !!v || "Password is required",
-      v =>
-        /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/.test(v) ||
-        "Password must be more than 7 and  required (a-z),(A-Z)",
-      v =>
-        v.length > 7 || "Password must be more than 7 and  required (a-z),(A-Z)"
-    ],
-    confirmPasswordRules: [v => !!v || "Password is required"],
-    sex: "",
-    emailRules: [
-      v => !!v || "E-mail is required",
-      v => /.+@.+\..+/.test(v) || "E-mail must be valid"
-    ],
-    nameRules: [
-      v => !!v || "Name is required",
-      v => v.length <= 32 || "Name must be less than 32 characters"
-    ]
-  }),
-  computed: {
-    computedDateFormatted() {
-      return this.formatDate(this.date);
-    },
-    passwordConfirmationRule() {
-      return () =>
-        this.password === this.confirmPassword || "Password must match";
+  async created() {
+    if (!this.$store.getters.isLoggedIn) {
+      this.$router.push("/login");
     }
-  },
-  watch: {
-    date(val) {
-      this.dateFormatted = this.formatDate(this.date);
-    }
+    this.courses = await AuthService.course();
   },
   methods: {
-    formatDate(date) {
-      if (!date) return null;
-      const [year, month, day] = date.split("-");
-      return `${month}/${day}/${year}`;
-    },
-    async signUp() {
-      if (this.$refs.form.validate()) {
-        try {
-        const credentials = {
-          fname: this.fname,
-          lname: this.lname,
-          emailuser: this.emailuser,
-          password: this.password,
-          birthday: this.date,
-          sex: this.sex
-        };
-        const response = await AuthService.signUp(credentials)
-        this.msg = response.msg;
-        this.showRegister = false;
-        this.$refs.form.reset();
-        }catch (error) {
-        alert(this.msg = error.response.data.msg)
-      }
-      }
-    },
-    closeRegister() {
-      this.showRegister = false;
-      this.$refs.form.reset();
-    },
-    closeLogin() {
-      this.showLogin = false;
-      this.$refs.form.reset();
-    },
-    async login() {
-      if (this.$refs.form.validate()) {
-        try {
-          const credentials = {
-            emailuser: this.emailuser,
-            password: this.password
-          };
-          const response = await AuthService.login(credentials);
-          this.msg = response.msg;
-          const token = response.token;
-          const user = response.user;
-          this.$store.dispatch("login", { token, user });
-           if (user.role === "teacher") {
-             this.$router.push("/HomepageTeacher");
-           }else{
-             this.$router.push("/HomeStudent");
-           }
-        } catch (error) {
-          alert(this.msg = error.response.data.msg)
-          //this.snackbar = true
-          //this.msg = error.response.data.msg;
-        }
-      }
+    logout() {
+      this.$store.dispatch("logout");
+      this.$router.push("/login");
     }
   }
 };
 </script>
-
-<style scoped>
-.bg {
-  background-color: #78909c;
-  height: 100%;
-}
-</style>
